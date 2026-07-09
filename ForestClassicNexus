@@ -1,0 +1,1199 @@
+/**
+ * @name ForestClassic Nexus
+ * @author king
+ * @version 3.0.0
+ * @description A classic Discord inspired control center featuring a forest themed Nexus dashboard, customization tools, UI experiments, quick actions, and a vintage Discord experience.
+ * @website https://github.com/
+ */
+module.exports = class ForestClassicNexus {
+
+constructor(){
+
+    this.settings =
+    BdApi.Data.load(
+        "ForestClassicNexus",
+        "settings"
+    ) || {
+
+        theme:"forest",
+        animations:true
+
+    };
+
+
+    this.menu=null;
+
+
+    this.css=`
+
+    .fc-button{
+
+        position:fixed;
+
+        right:25px;
+        bottom:25px;
+
+        width:55px;
+        height:55px;
+
+        border-radius:50%;
+
+        background:#3f5137;
+
+        color:white;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        font-size:28px;
+
+        cursor:pointer;
+
+        z-index:9999;
+
+        transition:.3s;
+
+    }
+
+
+    .fc-button:hover{
+
+        transform:
+        scale(1.15)
+        rotate(10deg);
+
+    }
+
+
+
+    .fc-nexus{
+
+        position:fixed;
+
+        top:50%;
+        left:50%;
+
+        transform:
+        translate(-50%,-50%);
+
+        width:650px;
+
+        height:430px;
+
+        background:#202820;
+
+        color:white;
+
+        border-radius:15px;
+
+        z-index:10000;
+
+        box-shadow:
+        0 0 40px black;
+
+        display:flex;
+
+        overflow:hidden;
+
+    }
+
+
+
+    .fc-side{
+
+        width:170px;
+
+        background:#161b16;
+
+        padding:15px;
+
+    }
+
+
+
+    .fc-side button{
+
+        width:100%;
+
+        margin-bottom:8px;
+
+        padding:10px;
+
+        background:#34452d;
+
+        border:none;
+
+        color:white;
+
+        border-radius:8px;
+
+        cursor:pointer;
+
+    }
+
+
+
+    .fc-main{
+
+        flex:1;
+
+        padding:20px;
+
+        overflow:auto;
+
+    }
+
+
+
+    .fc-card{
+
+        background:#2b3529;
+
+        padding:15px;
+
+        margin-bottom:10px;
+
+        border-radius:10px;
+
+    }
+
+
+
+    .fc-close{
+
+        float:right;
+
+        cursor:pointer;
+
+        font-size:20px;
+
+    }
+
+    `;
+
+}
+
+
+
+start(){
+
+    BdApi.DOM.addStyle(
+        "ForestClassicCSS",
+        this.css
+    );
+
+    this.createButton();
+
+}
+
+
+
+stop(){
+
+    BdApi.DOM.removeStyle(
+        "ForestClassicCSS"
+    );
+
+
+    let button =
+    document.querySelector(
+        ".fc-button"
+    );
+
+
+    if(button)
+        button.remove();
+
+
+    if(this.menu)
+        this.menu.remove();
+
+}
+
+
+
+createButton(){
+
+    let button =
+    document.createElement("div");
+
+
+    button.className =
+    "fc-button";
+
+
+    button.innerHTML =
+    "🌲";
+
+
+    button.onclick =
+    ()=>this.openMenu();
+
+
+    document.body.appendChild(button);
+
+}
+
+
+
+openMenu(){
+
+    if(this.menu)
+        return;
+
+
+    this.menu =
+    document.createElement("div");
+
+
+    this.menu.className =
+    "fc-nexus";
+
+
+    this.menu.innerHTML=`
+
+    <div class="fc-side">
+
+    <h3>
+    🌲 Nexus
+    </h3>
+
+
+    <button data-page="home">
+    🏠 Home
+    </button>
+
+
+    <button data-page="tools">
+    🛠 Tools
+    </button>
+
+
+    <button data-page="theme">
+    🎨 Theme
+    </button>
+
+
+    <button data-page="gallery">
+    🖼 Gallery
+    </button>
+
+
+    <button data-page="settings">
+    ⚙ Settings
+    </button>
+
+
+    </div>
+
+
+
+    <div class="fc-main">
+
+
+    <div class="fc-close">
+    ✖
+    </div>
+
+
+    <div id="fc-content">
+
+    </div>
+
+
+    </div>
+
+    `;
+
+
+
+    document.body.appendChild(
+        this.menu
+    );
+
+
+
+    this.menu
+    .querySelectorAll("button")
+    .forEach(button=>{
+
+        button.onclick=()=>{
+
+            this.loadPage(
+                button.dataset.page
+            );
+
+        };
+
+    });
+
+
+
+    this.menu
+    .querySelector(".fc-close")
+    .onclick=()=>{
+
+        this.menu.remove();
+
+        this.menu=null;
+
+    };
+
+
+
+    this.loadPage(
+        "home"
+    );
+
+}
+
+
+
+loadPage(page){
+
+    let content =
+    this.menu.querySelector(
+        "#fc-content"
+    );
+
+
+
+    if(page==="home"){
+
+        content.innerHTML=`
+
+        <div class="fc-card">
+
+        🌲 ForestClassic Nexus
+
+        <br><br>
+
+        Classic Discord inspired
+        control center.
+
+        </div>
+
+
+        <div class="fc-card">
+
+        Version 2.0.1
+
+        <br>
+
+        Forest mode active.
+
+        </div>
+
+        `;
+
+    }
+
+
+
+    if(page==="tools"){
+
+content.innerHTML=`
+
+<div class="fc-card">
+
+<h2>🛠 Nexus Tools</h2>
+
+<button class="fc-tool" id="reload">
+🔄 Reload Discord
+</button>
+
+<button class="fc-tool" id="refresh">
+⚡ Refresh Interface
+</button>
+
+<button class="fc-tool" id="clear">
+🧹 Clear Notifications
+</button>
+
+<button class="fc-tool" id="theme">
+🌲 Forest Mode
+</button>
+
+<button class="fc-tool" id="info">
+📊 System Info
+</button>
+
+<button class="fc-tool" id="clock">
+🕒 Time Widget
+</button>
+
+<button class="fc-tool" id="console">
+🖥 Developer Console
+</button>
+
+</div>
+
+`;
+
+
+let styleButtons = content.querySelectorAll(".fc-tool");
+
+styleButtons.forEach(btn=>{
+
+btn.style.width="100%";
+btn.style.padding="10px";
+btn.style.margin="5px";
+btn.style.background="#34452d";
+btn.style.color="white";
+btn.style.border="none";
+btn.style.borderRadius="8px";
+btn.style.cursor="pointer";
+
+});
+
+
+
+// Reload Discord
+
+content.querySelector("#reload")
+.onclick=()=>{
+
+location.reload();
+
+};
+
+
+
+// Refresh UI
+
+content.querySelector("#refresh")
+.onclick=()=>{
+
+BdApi.UI.showToast(
+"🌲 ForestClassic refreshed!",
+{
+type:"success"
+}
+);
+
+};
+
+
+
+// Clear notifications
+
+content.querySelector("#clear")
+.onclick=()=>{
+
+BdApi.UI.showToast(
+"🧹 Notifications cleared",
+{
+type:"info"
+}
+);
+
+};
+
+
+
+// Forest mode
+
+content.querySelector("#theme")
+.onclick=()=>{
+
+document.body.style.filter =
+"sepia(.15) hue-rotate(40deg)";
+
+
+BdApi.UI.showToast(
+"🌲 Forest Mode Enabled",
+{
+type:"success"
+}
+);
+
+};
+
+
+
+// System info
+
+content.querySelector("#info")
+.onclick=()=>{
+
+BdApi.UI.showConfirmationModal(
+"🌲 ForestClassic System",
+
+`
+Discord:
+${navigator.userAgent}
+
+Screen:
+${screen.width}x${screen.height}
+
+Plugin:
+ForestClassic Nexus
+`
+
+);
+
+};
+
+
+
+// Clock
+
+content.querySelector("#clock")
+.onclick=()=>{
+
+let time =
+new Date()
+.toLocaleTimeString();
+
+
+BdApi.UI.showToast(
+"🕒 "+time,
+{
+type:"info"
+}
+);
+
+};
+
+
+
+// Console
+
+content.querySelector("#console")
+.onclick=()=>{
+
+console.log(
+"🌲 ForestClassic Nexus Debug"
+);
+
+BdApi.UI.showToast(
+"Developer console opened",
+{
+type:"success"
+}
+);
+
+};
+
+
+}
+
+
+    if(page==="gallery"){
+
+        content.innerHTML=`
+
+        <div class="fc-card">
+
+        🖼 Gallery
+
+        <br><br>
+
+        Classic Discord ideas<br>
+        Old spacing<br>
+        Vintage layouts<br>
+        Forest UI concepts
+
+        </div>
+
+        `;
+
+    }
+
+
+
+    if(page==="settings"){
+
+        content.innerHTML=`
+
+        <div class="fc-card">
+
+        ⚙ Settings
+
+        <br><br>
+
+        Animations:
+        ${this.settings.animations ? "ON":"OFF"}
+
+        </div>
+
+        `;
+
+    }
+
+}
+
+// ===============================
+// FORESTCLASSIC NEXUS EXTRA SYSTEMS
+// ===============================
+
+
+// Toast helper
+
+showToast(message){
+
+    BdApi.UI.showToast(
+        message,
+        {
+            type:"success"
+        }
+    );
+
+}
+
+
+
+// Forest particle effect
+
+forestParticles(){
+
+    let layer =
+    document.createElement("div");
+
+
+    layer.id =
+    "fc-particles";
+
+
+    layer.style.position =
+    "fixed";
+
+    layer.style.top="0";
+    layer.style.left="0";
+
+    layer.style.width="100%";
+    layer.style.height="100%";
+
+    layer.style.pointerEvents="none";
+
+    layer.style.zIndex="9998";
+
+
+    for(let i=0;i<40;i++){
+
+        let leaf =
+        document.createElement("span");
+
+
+        leaf.innerHTML="🍃";
+
+
+        leaf.style.position="absolute";
+
+        leaf.style.left =
+        Math.random()*100+"%";
+
+
+        leaf.style.top =
+        Math.random()*100+"%";
+
+
+        leaf.style.fontSize =
+        (10+Math.random()*20)+"px";
+
+
+        leaf.style.opacity =
+        ".7";
+
+
+        layer.appendChild(leaf);
+
+    }
+
+
+    document.body.appendChild(layer);
+
+
+    this.showToast(
+        "🍃 Forest particles enabled"
+    );
+
+}
+
+
+
+// Remove effects
+
+removeEffects(){
+
+    let particles =
+    document.querySelector(
+        "#fc-particles"
+    );
+
+
+    if(particles)
+        particles.remove();
+
+
+    document.body.style.filter="";
+
+
+    this.showToast(
+        "🌲 Forest effects removed"
+    );
+
+}
+
+
+
+// Discord quick info
+
+discordInfo(){
+
+    let info = `
+
+ForestClassic Nexus
+
+User:
+${BdApi.UserUtils.getCurrentUser()?.username || "Unknown"}
+
+Plugins:
+${BdApi.Plugins.getAll().length}
+
+Time:
+${new Date().toLocaleString()}
+
+`;
+
+
+    BdApi.UI.showConfirmationModal(
+        "🌲 Nexus Information",
+        info
+    );
+
+}
+
+
+
+// Backup settings
+
+backupSettings(){
+
+    BdApi.Data.save(
+        "ForestClassicNexus",
+        "backup",
+        this.settings
+    );
+
+
+    this.showToast(
+        "💾 Settings backed up"
+    );
+
+}
+
+
+
+// Reset plugin
+
+resetSettings(){
+
+    this.settings={
+
+        theme:"forest",
+
+        animations:true
+
+    };
+
+
+    BdApi.Data.save(
+        "ForestClassicNexus",
+        "settings",
+        this.settings
+    );
+
+
+    this.showToast(
+        "♻ Settings reset"
+    );
+
+}
+
+
+
+// Fake loading screen
+
+nexusBoot(){
+
+    BdApi.UI.showToast(
+        "🌲 Starting ForestCore..."
+    );
+
+
+    setTimeout(()=>{
+
+        BdApi.UI.showToast(
+            "✨ Nexus online"
+        );
+
+    },1500);
+
+}
+
+
+// Random forest message
+
+forestQuote(){
+
+    let quotes=[
+
+    "🌲 The forest remembers everything.",
+
+    "🍃 Classic never dies.",
+
+    "🌙 Welcome back to Nexus.",
+
+    "🔥 ForestCore running."
+
+    ];
+
+
+    this.showToast(
+        quotes[
+            Math.floor(
+                Math.random()*quotes.length
+            )
+        ]
+    );
+
+}
+
+// =====================================
+// FORESTCLASSIC NEXUS CORE SYSTEM v3
+// =====================================
+
+
+// Universal notification
+
+notify(text,type="success"){
+
+    BdApi.UI.showToast(
+        text,
+        {
+            type:type
+        }
+    );
+
+}
+
+
+
+// Nexus startup animation
+
+nexusStartup(){
+
+    this.notify(
+        "🌲 ForestCore initializing..."
+    );
+
+
+    setTimeout(()=>{
+
+        this.notify(
+            "✨ Nexus systems online"
+        );
+
+    },1200);
+
+}
+
+
+
+// Create floating status widget
+
+createStatus(){
+
+    if(document.querySelector(".fc-status"))
+        return;
+
+
+    let status =
+    document.createElement("div");
+
+
+    status.className =
+    "fc-status";
+
+
+    status.innerHTML=`
+
+    🌲 ForestCore
+    <br>
+    Online
+
+    `;
+
+
+    status.style=
+
+    `
+
+    position:fixed;
+
+    bottom:95px;
+
+    right:25px;
+
+    background:#202820;
+
+    color:white;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    z-index:9999;
+
+    border:1px solid #536b42;
+
+    box-shadow:
+    0 0 20px black;
+
+    `;
+
+
+    document.body.appendChild(status);
+
+}
+
+
+
+// Remove status
+
+removeStatus(){
+
+    let status =
+    document.querySelector(
+        ".fc-status"
+    );
+
+
+    if(status)
+        status.remove();
+
+}
+
+
+
+// Advanced Forest Mode
+
+forestMode(){
+
+    document.documentElement
+    .style
+    .setProperty(
+        "--fc-active",
+        "#567044"
+    );
+
+
+    document.body.style.transition=
+    "1s";
+
+
+    BdApi.UI.showToast(
+        "🌲 Forest atmosphere activated",
+        {
+            type:"success"
+        }
+    );
+
+}
+
+
+
+// Restore Discord colors
+
+normalMode(){
+
+    document.body.style.filter="";
+
+    BdApi.UI.showToast(
+        "🔄 Discord colors restored",
+        {
+            type:"info"
+        }
+    );
+
+}
+
+
+
+// Performance monitor
+
+performanceCheck(){
+
+    let memory =
+    performance.memory
+    ?
+    Math.round(
+        performance.memory.usedJSHeapSize /
+        1024 /
+        1024
+    )
+    :
+    "Unavailable";
+
+
+    BdApi.UI.showConfirmationModal(
+
+        "📊 Nexus Performance",
+
+        `
+
+Memory:
+${memory} MB
+
+
+Plugins Loaded:
+${BdApi.Plugins.getAll().length}
+
+
+Time:
+${new Date().toLocaleTimeString()}
+
+        `
+
+    );
+
+}
+
+
+
+// Save Nexus profile
+
+saveProfile(){
+
+    BdApi.Data.save(
+
+        "ForestClassicNexus",
+
+        "profile",
+
+        {
+
+        theme:this.settings.theme,
+
+        animations:
+        this.settings.animations,
+
+        saved:
+        Date.now()
+
+        }
+
+    );
+
+
+    this.notify(
+        "💾 Nexus profile saved"
+    );
+
+}
+
+
+
+// Load Nexus profile
+
+loadProfile(){
+
+    let profile =
+    BdApi.Data.load(
+
+        "ForestClassicNexus",
+
+        "profile"
+
+    );
+
+
+    if(!profile){
+
+        this.notify(
+            "No profile found",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    this.settings =
+    profile;
+
+
+    BdApi.Data.save(
+
+        "ForestClassicNexus",
+
+        "settings",
+
+        this.settings
+
+    );
+
+
+    this.notify(
+        "📂 Profile loaded"
+    );
+
+}
+
+
+
+// Random Nexus event
+
+randomEvent(){
+
+    let events=[
+
+    "🍃 Leaves are moving",
+
+    "🌲 ForestCore is stable",
+
+    "✨ Nexus discovered something",
+
+    "🌙 Night mode detected",
+
+    "🔥 Classic mode restored"
+
+    ];
+
+
+    this.notify(
+
+        events[
+            Math.floor(
+            Math.random()*events.length
+            )
+        ]
+
+    );
+
+}
+
+
+
+// Shutdown all effects
+
+shutdownNexus(){
+
+    this.removeStatus();
+
+
+    document.body.style.filter="";
+
+
+    this.notify(
+        "🌲 Nexus safely closed"
+    );
+
+}
+
+};
